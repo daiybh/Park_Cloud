@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"net/http"
 	"time"
@@ -26,7 +27,12 @@ func heartPack(conn net.Conn) {
 }
 
 func main() {
-	//fmt.Println(m["servers"])
+	//	flag.Parse()
+
+	//	defer glog.Flush()
+	//	glog.Info("<<<<<<<<<<<start>>>>>>>>>>>>>>>>>>>>")
+	log.SetFlags(log.Ldate | log.Lshortfile)
+	log.Println("<<<<<<<<<<<start>>>>>>>>>>>>>>>>>>>>")
 	// 创建监听
 	ps := ParkServer{}
 	ps.startServer()
