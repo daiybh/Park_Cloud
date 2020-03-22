@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net"
+	"net/http"
 	"time"
 )
 
@@ -29,5 +30,20 @@ func main() {
 	// 创建监听
 	ps := ParkServer{}
 	ps.startServer()
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		//var s string
+		//s = "welcome " + time.Now().UTC().String() + "<br>"
+		fmt.Fprintln(w, "welcome to go website"+time.Now().UTC().String())
+		for k, v := range ps.connMap {
+			fmt.Fprintln(w, k, v, v.RemoteAddr().String())
+		}
+
+	})
+
+	fs := http.FileServer(http.Dir("static/"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
+
+	http.ListenAndServe(":80", nil)
 
 }

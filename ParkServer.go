@@ -11,15 +11,9 @@ type ParkServer struct {
 	connMap  map[string]net.Conn //key:park_id value: Net.conn
 }
 
-func (ps *ParkServer) startServer() {
-	fmt.Println("package park")
-	var err error
-	ps.listener, err = net.Listen("tcp", ":6789")
-	if err != nil {
-		fmt.Println("listen err:", err)
-		return
-	}
+func (ps *ParkServer) acceptThread() {
 	defer ps.listener.Close() // 主协程结束时，关闭listener
+	fmt.Println("parkServer   acceptThrad....")
 	ps.connMap = make(map[string]net.Conn)
 	for {
 		fmt.Println("服务器等待客户端建立连接...")
@@ -34,6 +28,16 @@ func (ps *ParkServer) startServer() {
 
 		go ps.HandleConn(conn)
 	}
+}
+func (ps *ParkServer) startServer() {
+	fmt.Println("package park")
+	var err error
+	ps.listener, err = net.Listen("tcp", ":6789")
+	if err != nil {
+		fmt.Println("listen err:", err)
+		return
+	}
+	go ps.acceptThread()
 }
 
 func (ps *ParkServer) HandleConn(conn net.Conn) {
@@ -57,6 +61,8 @@ func (ps *ParkServer) HandleConn(conn net.Conn) {
 
 			if serverName == "login" {
 				ps.connMap[parkid] = conn
+			} else if serverName == "in_park" {
+
 			}
 			time.Sleep(1 * time.Second)
 			n, err = conn.Write([]byte(ret + "\r\n"))
