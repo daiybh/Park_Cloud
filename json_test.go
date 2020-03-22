@@ -8,6 +8,6 @@ func TestJson(t *testing.T) {
 	"local_id":"c61562ee71b6_2.1.0.0_channels_1_2_3_4_5_6_7_8_9_10_11_12_13_14_15_16",
 	"version":"2.1.0.0"}}`
 	by := []byte(str)
-	aa := parseJSON(by)
-	t.Log(aa)
+	aa, bb, cc, dd := parseJSON(by)
+	t.Log(" aa:", aa, " bb: ", bb, " cc: ", cc, " dd: ", dd)
 }
