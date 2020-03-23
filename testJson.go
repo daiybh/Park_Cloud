@@ -59,3 +59,55 @@ func mainjsonparser() {
 	}, "person", "avatars")
 
 }
+
+func fun1(key string) {
+	fmt.Printf("fun11 key=%s\n", key)
+}
+
+func fun2(key string) {
+	fmt.Printf("fun22222222222 key=%s\n", key)
+}
+
+var funVar func(key string)
+
+type _server struct {
+	m map[string]muxEntry11
+}
+
+func (s *_server) handle(key string, handler func(string)) {
+	if s.m == nil {
+		s.m = make(map[string]muxEntry11)
+	}
+	e := muxEntry11{h: handler, pattern: key}
+	s.m[key] = e
+}
+func (s *_server) DoWork(key string, vvv string) {
+	_, ok := s.m[key]
+	if ok {
+		//	fmt.Println(v.h, v.pattern)
+		//v.h(vvv)
+	}
+}
+
+type muxEntry11 struct {
+	h       func(string)
+	pattern string
+}
+
+var MyServer _server
+
+func mainaaaaa() {
+
+	for i := 0; i < 10; i++ {
+		vvv := MD5("hiello")
+		fmt.Println("vvvv", vvv)
+	}
+	MyServer.handle("kk", func(sv string) {
+		fmt.Println("handle kk", sv)
+	})
+
+	MyServer.handle("bb", func(sv string) {
+		fmt.Println("handle bb", sv)
+	})
+	MyServer.DoWork("bb", "hello bb")
+}

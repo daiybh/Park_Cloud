@@ -37,6 +37,10 @@ func main() {
 	defer logger.Close()
 	// 创建监听
 	ps := ParkServer{}
+	ps.HandleFunc("login", func(buf []byte, n int, conn net.Conn) {
+
+	})
+
 	ps.startServer()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

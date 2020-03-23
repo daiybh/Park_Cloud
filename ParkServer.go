@@ -11,8 +11,29 @@ import (
 type ParkServer struct {
 	listener net.Listener
 	connMap  map[string]net.Conn //key:park_id value: Net.conn
+	m        map[string]muxEntry
 }
+type Handler func(buf []byte, n int, conn net.Conn) string
+type muxEntry struct {
+	h       Handler
+	pattern string
+}
+type HandlerFunc func([]byte, int, net.Conn)
 
+// ServeHTTP calls f(w, r).
+func (f HandlerFunc) ServeHTTP(buf []byte, n int, conn net.Conn) {
+	f(buf, n, conn)
+}
+func (ps *ParkServer) HandleFunc(pattern string, handler func(buf []byte, n int, conn net.Conn)) {
+	//	DefaultServeMux.HandleFunc(pattern, handler)
+	if ps.m == nil {
+		ps.m = make(map[string]muxEntry)
+	}
+	//hh := HandlerFunc(handler)
+
+	//e := muxEntry{h: hh, pattern: pattern}
+	//ps.m[pattern] = e
+}
 func (ps *ParkServer) acceptThread() {
 	defer ps.listener.Close() // 主协程结束时，关闭listener
 	fmt.Println("parkServer   acceptThrad....")

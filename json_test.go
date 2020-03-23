@@ -1,6 +1,8 @@
 package main
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestJsonlogin(t *testing.T) {
 	str := `{"service_name":"login","sign":"15E3DF039F5A02BB1A17316976DE8A51",
@@ -37,4 +39,9 @@ func TestJson_XXXXX(t *testing.T) {
 	aa := handleInPark(by, len(str))
 
 	t.Log(" aa:", aa)
+}
+
+func TestCallBack(t *testing.T) {
+	mainaaaaa()
+	t.Log(" aa:", "aa")
 }
