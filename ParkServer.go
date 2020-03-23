@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net"
+	"strconv"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/kuxuee/logger"
@@ -54,8 +55,7 @@ func (ps *ParkServer) acceptThread() {
 }
 func (ps *ParkServer) startServer(port int) {
 	var err error
-
-	ps.listener, err = net.Listen("tcp", ":"+string(port))
+	ps.listener, err = net.Listen("tcp", ":"+strconv.Itoa(port))
 	if err != nil {
 		logger.Fatal("listen err:", err)
 		return

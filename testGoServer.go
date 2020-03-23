@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/kuxuee/logger"
@@ -83,7 +84,7 @@ func main() {
 	fs := http.FileServer(http.Dir("static/"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	err = http.ListenAndServe(":"+string(Config.ServerConfig.Httpport), nil)
+	err = http.ListenAndServe(":"+strconv.Itoa(Config.ServerConfig.Httpport), nil)
 	if err != nil {
 		logger.Fatal("http.listern ", Config.ServerConfig.Httpport, " failed.", err)
 	}
