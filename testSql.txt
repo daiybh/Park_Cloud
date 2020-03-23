@@ -1,0 +1,10 @@
+declare  @Sid int
+set @Sid = (select MAX(parked_id) from parked ) +1;
+insert into parked (parked_id,card_id,in_sbname,in_time,card_kind ,fee_lb, park_id,car_cp)
+ values (@Sid,'车牌计费','大门入口',GETDATE(),'计时卡','小型车','1','粤S86519')
+ 
+ 
+ 
+ declare  @Sid int
+set @Sid = (select MAX(parked_id) from parked ) ;
+ update parked set out_sbname='大门出口', out_time=GETDATE() where parked_id=@Sid

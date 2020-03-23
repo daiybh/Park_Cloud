@@ -29,3 +29,12 @@ func TestJson_outpark(t *testing.T) {
 	t.Log(" aa:", aa, " bb: ", bb, " cc: ", cc, " dd: ", dd)
 
 }
+
+func TestJson_XXXXX(t *testing.T) {
+	str := `{"service_namea":"out_park","sign":"DD0BD8EAFE672B4741B4F3F523E794F3","token":"5880277f494544259642dd7ac35afdf4","data":{"car_number":"粤B1H7S0","in_time":1576327327,"out_time":1576327362,"total":"0.0","order_id":"1131522704","empty_ plot":0,"park_id":"24155","pay_type":"cash","auth_code":""}}
+	`
+	by := []byte(str)
+	aa, bb, cc, dd := parseJSON(by)
+	t.Log(" aa:", aa, " bb: ", bb, " cc: ", cc, " dd: ", dd)
+
+}

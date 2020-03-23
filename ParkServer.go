@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"net"
-	"time"
 
+	jsoniter "github.com/json-iterator/go"
 	"github.com/kuxuee/logger"
 )
 
@@ -57,33 +57,40 @@ func (ps *ParkServer) HandleConn(conn net.Conn) {
 			fmt.Println("err = ", err)
 			return
 		}
-		er, serverName, parkid, ret := parseJSON(buf[:n])
-		if er == nil {
-			fmt.Println("goback-->", serverName, parkid, ret)
-			logger.Info(string(buf[:n]))
-			if serverName == "login" {
-				ps.connMap[parkid] = conn
+		ps.handleMessage(conn, buf, n)
 
-			} else {
-				if _, ok := ps.connMap[parkid]; !ok {
-					fmt.Println("need login before")
-					continue
-				}
-				if serverName == "in_park" {
-				}
-			}
-			time.Sleep(1 * time.Second)
-			n, err = conn.Write([]byte(ret + "\r\n"))
-			fmt.Println("write", n, err)
-			if err != nil {
-				return
-			}
-			//go heartPack(conn)
-		} else {
-			//把数据转换为大写，再给用户发送
-			fmt.Println("nos")
-			//	conn.Write([]byte(strings.ToUpper(string(buf[:n]))))
-		}
+	}
+
+}
+
+func (ps *ParkServer) handleMessage(conn net.Conn, buf []byte, n int) {
+
+	servicename := jsoniter.Get(buf, "service_name").ToString()
+	fmt.Println("servicename ---->", servicename)
+	logger.Info(string(buf[:n]))
+	if servicename == "" {
+		fmt.Println("servicename null")
+		return
+	}
+	token := jsoniter.Get(buf, "token").ToString()
+	fmt.Println("handleMessage", servicename, token)
+
+	var retString string
+	switch servicename {
+	case "login":
+		retString = handleLogin(buf, n)
+	case "in_park":
+		retString = handleInPark(buf, n)
+	case "out_park":
+		retString = handleOutpark(buf, n)
+
+	}
+	if retString == "" {
+		return
+	}
+	n, err := conn.Write([]byte(retString + "\r\n"))
+	if err != nil {
+		return
 	}
 
 }
