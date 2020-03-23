@@ -57,7 +57,9 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	logger.Info("start main.......")
-	http.ListenAndServe(":80", nil)
-
+	err = http.ListenAndServe(":8090", nil)
+	if err != nil {
+		logger.Fatal("http.listern 8090 failed.", err)
+	}
 	logger.Info("End main.......")
 }
