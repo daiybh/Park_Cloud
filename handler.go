@@ -67,6 +67,10 @@ func (g *_ClientGroup) CheckToken(parkID string, token string) bool {
 
 var ClientGroup = _ClientGroup{}
 
+func NeedRecord(carNumber string) bool {
+	logger.Info("carNumber:", carNumber)
+	return true
+}
 func handleLogin(buf []byte, n int) string {
 
 	parkID := jsoniter.Get(buf, "data", "park_id").ToString()
@@ -88,9 +92,13 @@ func handleInPark(jsonStr []byte, n int) string {
 	parkID := jsoniter.Get(jsonStr, "data", "park_id").ToString()
 	orderID := jsoniter.Get(jsonStr, "data", "order_id").ToString()
 	token := jsoniter.Get(jsonStr, "token").ToString()
-	if ok := ClientGroup.CheckToken(parkID, token); !ok {
+	if !ClientGroup.CheckToken(parkID, token) {
 		logger.Error("wrong token ", parkID, token)
 		return ""
+	}
+	carNumber := jsoniter.Get(jsonStr, "data", "car_number").ToString()
+	if NeedRecord(carNumber) {
+
 	}
 	in := inParkReturn{
 		ParkID:      parkID,
@@ -110,9 +118,13 @@ func handleOutpark(jsonStr []byte, n int) string {
 	orderID := jsoniter.Get(jsonStr, "data", "order_id").ToString()
 	payType := jsoniter.Get(jsonStr, "data", "pa_type").ToString()
 	token := jsoniter.Get(jsonStr, "token").ToString()
-	if ok := ClientGroup.CheckToken(parkID, token); !ok {
+	if !ClientGroup.CheckToken(parkID, token) {
 		logger.Error("wrong token ", parkID, token)
 		return ""
+	}
+	carNumber := jsoniter.Get(jsonStr, "data", "car_number").ToString()
+	if NeedRecord(carNumber) {
+
 	}
 	outRet := outParkReturn{
 		Errmsg:      "",
