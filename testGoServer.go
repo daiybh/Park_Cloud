@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -28,7 +30,30 @@ func heartPack(conn net.Conn) {
 	}
 }
 
+type configs struct {
+	ServerConfig struct {
+		Httpport   int `json:"httpport"`
+		Socketport int `json:"socketport"`
+	} `json:"serverConfig"`
+}
+
+var Config configs
+
+func loadConfig() error {
+	filename := "./logs.config"
+	bytes, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return err
+	}
+	//c := configs{}
+	err = json.Unmarshal(bytes, &Config)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func main() {
+	loadConfig()
 	err := logger.NewLogger("default")
 	if err != nil {
 		log.Fatal(err)
@@ -36,16 +61,14 @@ func main() {
 
 	defer logger.Close()
 
-	httpPort := 8090
-	socketPort := 6789
-	logger.Info("start main.......http:", httpPort, "  socket:", socketPort)
+	logger.Info("start main.......http:", Config.ServerConfig.Httpport, "  socket:", Config.ServerConfig.Socketport)
 
 	// 创建监听
 	ps := ParkServer{}
 	ps.HandleFunc("login", func(buf []byte, n int, conn net.Conn) {
 
 	})
-	ps.startServer(socketPort)
+	ps.startServer(Config.ServerConfig.Socketport)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		//var s string
@@ -60,9 +83,9 @@ func main() {
 	fs := http.FileServer(http.Dir("static/"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	err = http.ListenAndServe(":"+string(httpPort), nil)
+	err = http.ListenAndServe(":"+string(Config.ServerConfig.Httpport), nil)
 	if err != nil {
-		logger.Fatal("http.listern ", httpPort, " failed.", err)
+		logger.Fatal("http.listern ", Config.ServerConfig.Httpport, " failed.", err)
 	}
 	logger.Info("End main.......")
 }
