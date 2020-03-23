@@ -64,8 +64,13 @@ func (ps *ParkServer) HandleConn(conn net.Conn) {
 			if serverName == "login" {
 				ps.connMap[parkid] = conn
 
-			} else if serverName == "in_park" {
-
+			} else {
+				if _, ok := ps.connMap[parkid]; !ok {
+					fmt.Println("need login before")
+					continue
+				}
+				if serverName == "in_park" {
+				}
 			}
 			time.Sleep(1 * time.Second)
 			n, err = conn.Write([]byte(ret + "\r\n"))
