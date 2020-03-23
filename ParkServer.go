@@ -52,10 +52,10 @@ func (ps *ParkServer) acceptThread() {
 		go ps.HandleConn(conn)
 	}
 }
-func (ps *ParkServer) startServer() {
-	fmt.Println("package park")
+func (ps *ParkServer) startServer(port int) {
 	var err error
-	ps.listener, err = net.Listen("tcp", ":6789")
+
+	ps.listener, err = net.Listen("tcp", ":"+string(port))
 	if err != nil {
 		logger.Fatal("listen err:", err)
 		return

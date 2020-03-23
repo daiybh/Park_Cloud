@@ -35,13 +35,17 @@ func main() {
 	}
 
 	defer logger.Close()
+
+	httpPort := 8090
+	socketPort := 6789
+	logger.Info("start main.......http:", httpPort, "  socket:", socketPort)
+
 	// 创建监听
 	ps := ParkServer{}
 	ps.HandleFunc("login", func(buf []byte, n int, conn net.Conn) {
 
 	})
-
-	ps.startServer()
+	ps.startServer(socketPort)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		//var s string
@@ -56,10 +60,9 @@ func main() {
 	fs := http.FileServer(http.Dir("static/"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	logger.Info("start main.......")
-	err = http.ListenAndServe(":8090", nil)
+	err = http.ListenAndServe(":"+string(httpPort), nil)
 	if err != nil {
-		logger.Fatal("http.listern 8090 failed.", err)
+		logger.Fatal("http.listern ", httpPort, " failed.", err)
 	}
 	logger.Info("End main.......")
 }
