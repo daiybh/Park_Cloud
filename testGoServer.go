@@ -6,6 +6,8 @@ import (
 	"net"
 	"net/http"
 	"time"
+
+	"github.com/kuxuee/logger"
 )
 
 func heartPack(conn net.Conn) {
@@ -27,12 +29,12 @@ func heartPack(conn net.Conn) {
 }
 
 func main() {
-	//	flag.Parse()
+	err := logger.NewLogger("default")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	//	defer glog.Flush()
-	//	glog.Info("<<<<<<<<<<<start>>>>>>>>>>>>>>>>>>>>")
-	log.SetFlags(log.Ldate | log.Lshortfile)
-	log.Println("<<<<<<<<<<<start>>>>>>>>>>>>>>>>>>>>")
+	defer logger.Close()
 	// 创建监听
 	ps := ParkServer{}
 	ps.startServer()

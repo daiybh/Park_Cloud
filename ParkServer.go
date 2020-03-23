@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net"
 	"time"
+
+	"github.com/kuxuee/logger"
 )
 
 type ParkServer struct {
@@ -34,7 +36,7 @@ func (ps *ParkServer) startServer() {
 	var err error
 	ps.listener, err = net.Listen("tcp", ":6789")
 	if err != nil {
-		fmt.Println("listen err:", err)
+		logger.Fatal("listen err:", err)
 		return
 	}
 	go ps.acceptThread()
@@ -58,9 +60,10 @@ func (ps *ParkServer) HandleConn(conn net.Conn) {
 		er, serverName, parkid, ret := parseJSON(buf[:n])
 		if er == nil {
 			fmt.Println("goback-->", serverName, parkid, ret)
-
+			logger.Info(string(buf[:n]))
 			if serverName == "login" {
 				ps.connMap[parkid] = conn
+
 			} else if serverName == "in_park" {
 
 			}
