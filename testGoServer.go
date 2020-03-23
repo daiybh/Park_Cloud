@@ -56,6 +56,8 @@ func main() {
 	fs := http.FileServer(http.Dir("static/"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
+	logger.Info("start main.......")
 	http.ListenAndServe(":80", nil)
 
+	logger.Info("End main.......")
 }

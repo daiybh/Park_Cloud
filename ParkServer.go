@@ -60,6 +60,7 @@ func (ps *ParkServer) startServer() {
 		logger.Fatal("listen err:", err)
 		return
 	}
+	logger.Info("startServer....")
 	go ps.acceptThread()
 }
 
