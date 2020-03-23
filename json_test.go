@@ -16,7 +16,9 @@ func TestJsonlogin(t *testing.T) {
 }
 
 func TestJson_inpark(t *testing.T) {
-	str := `{"service_name":"in_park","sign":"987B2045CDCFF2FAFDA392E3EA8093B4","token":"5880277f494544259642dd7ac35afdf4","data":{"car_number":"绮W4444","in_time":1577244491,"order_id":"302","empty_plot":885,"park_id":"24155"}}`
+	str := `{"service_name":"in_park","sign":"987B2045CDCFF2FAFDA392E3EA8093B4","token":"5880277f494544259642dd7ac35afdf4",
+	"data":{"car_number":"绮W4444","in_time":1577244491,"order_id":"302","empty_plot":885,"park_id":"24155"}}
+	`
 	by := []byte(str)
 	aa := handleInPark(by, len(str))
 
