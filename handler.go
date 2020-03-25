@@ -15,12 +15,41 @@ type loginReturn struct {
 	Token       string `json:"token"`
 	ServiceName string `json:"service_name"`
 }
+type inParkCome struct {
+	ServiceName string `json:"service_name"`
+	Sign        string `json:"sign"`
+	Token       string `json:"token"`
+	Data        struct {
+		CarNumber string `json:"car_number"`
+		InTime    int    `json:"in_time"`
+		OrderID   string `json:"order_id"`
+		EmptyPlot int    `json:"empty_plot"`
+		ParkID    string `json:"park_id"`
+	} `json:"data"`
+}
+
 type inParkReturn struct {
 	ServiceName string `json:"service_name"`
 	ParkID      string `json:"park_id"`
 	Errmsg      string `json:"errmsg"`
 	State       int    `json:"state"`
 	OrderID     string `json:"order_id"`
+}
+type outParkCome struct {
+	ServiceName string `json:"service_name"`
+	Sign        string `json:"sign"`
+	Token       string `json:"token"`
+	Data        struct {
+		CarNumber string `json:"car_number"`
+		InTime    int    `json:"in_time"`
+		OutTime   int    `json:"out_time"`
+		Total     string `json:"total"`
+		OrderID   string `json:"order_id"`
+		EmptyPlot int    `json:"empty_ plot"`
+		ParkID    string `json:"park_id"`
+		PayType   string `json:"pay_type"`
+		AuthCode  string `json:"auth_code"`
+	} `json:"data"`
 }
 type outParkReturn struct {
 	ServiceName string `json:"service_name"`
@@ -89,26 +118,28 @@ func handleLogin(buf []byte, n int) string {
 func handleInPark(jsonStr []byte, n int) string {
 	//str := `{"service_name":"in_park","sign":"987B2045CDCFF2FAFDA392E3EA8093B4","token":"5880277f494544259642dd7ac35afdf4","data":{"car_number":"绮W4444","in_time":1577244491,"order_id":"302","empty_plot":885,"park_id":"24155"}}`
 
-	parkID := jsoniter.Get(jsonStr, "data", "park_id").ToString()
-	orderID := jsoniter.Get(jsonStr, "data", "order_id").ToString()
-	token := jsoniter.Get(jsonStr, "token").ToString()
+	var inPark inParkCome
 
-	if !ClientGroup.CheckToken(parkID, token) {
-		logger.Error("wrong token ", parkID, token)
+	if err := jsoniter.Unmarshal(jsonStr, &inPark); err != nil {
+		logger.Error("Unmarshal failed.", jsonStr)
 		return ""
 	}
 
-	carNumber := jsoniter.Get(jsonStr, "data", "car_number").ToString()
-	if NeedRecord(carNumber) {
+	if !ClientGroup.CheckToken(inPark.Data.ParkID, inPark.token) {
+		logger.Error("wrong token ", inPark.Data.ParkID, inPark.token)
+		return ""
+	}
+
+	if NeedRecord(inPark.Data.CarNumber) {
 
 	}
 
-	Juma_makeParkIn()
+	JumaMakeParkIn()
 	in := inParkReturn{
-		ParkID:      parkID,
+		ParkID:      inPark.Data.ParkID,
 		Errmsg:      "",
 		State:       1,
-		OrderID:     orderID,
+		OrderID:     inPark.Data.OrderID,
 		ServiceName: "in_park",
 	}
 	b, _ := json.Marshal(in)
@@ -118,25 +149,26 @@ func handleInPark(jsonStr []byte, n int) string {
 
 func handleOutpark(jsonStr []byte, n int) string {
 	//	str := `{"service_name":"out_park","sign":"DD0BD8EAFE672B4741B4F3F523E794F3","token":"5880277f494544259642dd7ac35afdf4","data":{"car_number":"粤B1H7S0","in_time":1576327327,"out_time":1576327362,"total":"0.0","order_id":"1131522704","empty_ plot":0,"park_id":"24155","pay_type":"cash","auth_code":""}}`
-	parkID := jsoniter.Get(jsonStr, "data", "park_id").ToString()
-	orderID := jsoniter.Get(jsonStr, "data", "order_id").ToString()
-	payType := jsoniter.Get(jsonStr, "data", "pa_type").ToString()
-	token := jsoniter.Get(jsonStr, "token").ToString()
-	if !ClientGroup.CheckToken(parkID, token) {
-		logger.Error("wrong token ", parkID, token)
+
+	var outPark outParkCome
+	if err := jsoniter.Unmarshal(jsonStr, &outPark); err != nil {
+		logger.Error("Unmarshal failed.", jsonStr)
 		return ""
 	}
-	carNumber := jsoniter.Get(jsonStr, "data", "car_number").ToString()
-	if NeedRecord(carNumber) {
+	if !ClientGroup.CheckToken(outPark.Data.ParkID, outPark.Token) {
+		logger.Error("wrong token ", outPark.Data.ParkID, outPark.Token)
+		return ""
+	}
+	if NeedRecord(outPark.Data.CarNumber) {
 
 	}
-	Juma_makeParkOut()
+	JumaMakeParkOut()
 	outRet := outParkReturn{
 		Errmsg:      "",
 		State:       1,
-		OrderID:     orderID,
+		OrderID:     outPark.Data.OrderID,
 		ServiceName: "out_park",
-		PayType:     payType,
+		PayType:     outPark.Data.PayType,
 	}
 	b, _ := json.Marshal(outRet)
 

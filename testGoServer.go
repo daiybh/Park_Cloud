@@ -74,9 +74,16 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		//var s string
 		//s = "welcome " + time.Now().UTC().String() + "<br>"
+
 		fmt.Fprintln(w, "welcome to go website"+time.Now().UTC().String())
 		for k, v := range ps.connMap {
 			fmt.Fprintln(w, k, v, v.RemoteAddr().String())
+		}
+
+	})
+	http.Handle("/park/deliverTicket", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			return
 		}
 
 	})

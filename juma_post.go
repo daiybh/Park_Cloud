@@ -2,8 +2,6 @@ package main
 
 import (
 	"bytes"
-	"crypto/md5"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -19,14 +17,14 @@ func makepostURL(actionName string, sValue string) string {
 }
 
 //{"ParkCode":"5101070030","VehicleNo":"川DDDD77","StartTime":"2019-08-09 15:36:21"}
-type ParkIn struct {
+type JumaParkIn struct {
 	ParkCode  string `json:"ParkCode"`
 	VehicleNo string `json:"VehicleNo"`
 	StartTime string `json:"StartTime"`
 }
 
 //{"ParkCode":"5101070030","VehicleNo":"川DDDD77","StartTime":"2019-08-09 15:36:21","EndTime":"","PaymentMoney":1234.23}
-type ParkOut struct {
+type JumaParkOut struct {
 	ParkCode     string  `json:"ParkCode"`
 	VehicleNo    string  `json:"VehicleNo"`
 	StartTime    string  `json:"StartTime"`
@@ -48,14 +46,14 @@ func parkPost(actionName string, b *bytes.Buffer) {
 	}
 	fmt.Println(string(body))
 }
-func Juma_makeParkIn() {
-	u := ParkIn{ParkCode: "5101070030", VehicleNo: "川DDDD77", StartTime: "2019-08-09 15:36:21"}
+func JumaMakeParkIn() {
+	u := JumaParkIn{ParkCode: "5101070030", VehicleNo: "川DDDD77", StartTime: "2019-08-09 15:36:21"}
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(u)
 	parkPost("carStart", b)
 }
-func Juma_makeParkOut() {
-	u := ParkOut{ParkCode: "5101070030", VehicleNo: "川DDDD77", StartTime: "2019-08-09 15:36:21", EndTime: "2019-08-09 19:36:21", PaymentMoney: 19.8}
+func JumaMakeParkOut() {
+	u := JumaParkOut{ParkCode: "5101070030", VehicleNo: "川DDDD77", StartTime: "2019-08-09 15:36:21", EndTime: "2019-08-09 19:36:21", PaymentMoney: 19.8}
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(u)
 	parkPost("carEnd", b)
