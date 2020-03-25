@@ -44,6 +44,6 @@ func TestJson_XXXXX(t *testing.T) {
 }
 
 func TestCallBack(t *testing.T) {
-	mainaaaaa()
+	JumaTest()
 	t.Log(" aa:", "aa")
 }

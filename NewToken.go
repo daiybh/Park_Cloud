@@ -7,9 +7,13 @@ import (
 	"time"
 )
 
+func MD5_randomSalt(text string) string {
+	return MD5(text + GetRandomSalt())
+}
+
 func MD5(text string) string {
 	ctx := md5.New()
-	ctx.Write([]byte(text + GetRandomSalt()))
+	ctx.Write([]byte(text))
 
 	return hex.EncodeToString(ctx.Sum(nil))
 }

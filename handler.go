@@ -92,14 +92,18 @@ func handleInPark(jsonStr []byte, n int) string {
 	parkID := jsoniter.Get(jsonStr, "data", "park_id").ToString()
 	orderID := jsoniter.Get(jsonStr, "data", "order_id").ToString()
 	token := jsoniter.Get(jsonStr, "token").ToString()
+
 	if !ClientGroup.CheckToken(parkID, token) {
 		logger.Error("wrong token ", parkID, token)
 		return ""
 	}
+
 	carNumber := jsoniter.Get(jsonStr, "data", "car_number").ToString()
 	if NeedRecord(carNumber) {
 
 	}
+
+	Juma_makeParkIn()
 	in := inParkReturn{
 		ParkID:      parkID,
 		Errmsg:      "",
@@ -126,6 +130,7 @@ func handleOutpark(jsonStr []byte, n int) string {
 	if NeedRecord(carNumber) {
 
 	}
+	Juma_makeParkOut()
 	outRet := outParkReturn{
 		Errmsg:      "",
 		State:       1,
