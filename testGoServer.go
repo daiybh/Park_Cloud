@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -80,12 +81,16 @@ func main() {
 			fmt.Fprintln(c.Writer, k, v, v.RemoteAddr().String())
 		}
 	})
-	router.GET("/sendTicket", func(c *gin.Context) {
+	router.GET("/sendTicket/:name", func(c *gin.Context) {
+		name := c.Param("name")
 		vjson := `{"ticket_type":2,"create_time":1544248573,"limit_day":9999999999,"service_name":"deliver_ticket","have_order":1,
 		"park_id":"24155","endtime":"23:59","remark":"","discount":"","starttime":"00:00","ticket_id":"6547339",
 		"shop_name":"测全免","startdate":1544248567,"duration":0,"enddate":1563321600,
 		"money":"","time_range":0,"car_number":"苏AQW888","order_id":"102"}
 		`
+		if name != "" {
+			vjson = strings.Replace(vjson, "苏AQW888", name, 1)
+		}
 		ClientGroup.SendToClient("24155", []byte(vjson))
 	})
 	router.POST("/park/deliverTicket", func(c *gin.Context) {

@@ -102,7 +102,7 @@ func (g *_ClientGroup) SendToClient(parkID string, msg []byte) bool {
 	defer g.mu.Unlock()
 	v, ok := g.m[parkID]
 	if !ok || v.Conn == nil {
-		logger.Error("cannot found conn ", parkID, msg)
+		logger.Error("cannot found conn ", parkID, string(msg))
 		return false
 	}
 	_, err := v.Conn.Write(msg)
