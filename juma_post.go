@@ -9,12 +9,13 @@ import (
 	"strings"
 )
 
-func checkSign(jsonData string, sign string) {
+func checkSign(jsonData string, sign string) bool {
 	testKey := "206d98f4de9e4423b3aa42cd0c36fd84"
 	ss := jsonData + testKey
 	md5String := MD5(ss)
 	x := strings.Compare(md5String, sign)
 	fmt.Println("comapre-->", x, md5String, sign)
+	return x == 0
 }
 func makepostURL(actionName string, sValue string) string {
 	testKey := "206d98f4de9e4423b3aa42cd0c36fd84"
@@ -38,6 +39,15 @@ type JumaParkOut struct {
 	StartTime    string  `json:"StartTime"`
 	EndTime      string  `json:"EndTime"`
 	PaymentMoney float64 `json:"PaymentMoney"`
+}
+type JumaDeliverTicket struct {
+	TicketID   string `json:"ticket_id"`
+	CreateTime string `json:"create_time"`
+	Money      string `json:"money"`
+	CarNumber  string `json:"car_number"`
+	OrderID    string `json:"order_id"`
+	Remark     string `json:"remark"`
+	ParkID     string `json:"park_id"`
 }
 
 func parkPost(actionName string, b *bytes.Buffer) {

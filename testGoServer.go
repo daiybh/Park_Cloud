@@ -80,8 +80,15 @@ func main() {
 			fmt.Fprintln(c.Writer, k, v, v.RemoteAddr().String())
 		}
 	})
+	router.GET("/sendTicket", func(c *gin.Context) {
+		vjson := `{"ticket_type":2,"create_time":1544248573,"limit_day":9999999999,"service_name":"deliver_ticket","have_order":1,
+		"park_id":"24155","endtime":"23:59","remark":"","discount":"","starttime":"00:00","ticket_id":"6547339",
+		"shop_name":"测全免","startdate":1544248567,"duration":0,"enddate":1563321600,
+		"money":"","time_range":0,"car_number":"苏AQW888","order_id":"102"}
+		`
+		ClientGroup.SendToClient("24155", []byte(vjson))
+	})
 	router.POST("/park/deliverTicket", func(c *gin.Context) {
-
 		contentType := c.ContentType()
 		if contentType != "application/json" {
 			c.JSON(http.StatusNoContent, gin.H{
@@ -90,28 +97,21 @@ func main() {
 			})
 			return
 		}
-		fmt.Println("contentType:---->", contentType)
 		sign := c.Query("sign")
-
-		fmt.Println("sign->", sign)
 		data, _ := ioutil.ReadAll(c.Request.Body)
-		fmt.Println("ctx.Request.body:", string(data))
 		logger.Info("deliverTicket", string(data))
-		checkSign(string(data), sign)
-		//{"ticket_id":"10022","create_time":"1490879218","money":"5","car_number":"川AD12345","order_id":"9880","remark":"32","park_id":"test001"}
-		type DeliverTicket struct {
-			TicketID   string `json:"ticket_id"`
-			CreateTime string `json:"create_time"`
-			Money      string `json:"money"`
-			CarNumber  string `json:"car_number"`
-			OrderID    string `json:"order_id"`
-			Remark     string `json:"remark"`
-			ParkID     string `json:"park_id"`
+		if !checkSign(string(data), sign) {
+			c.JSON(http.StatusOK, gin.H{
+				"state":  -1001007,
+				"result": "wrong sign",
+			})
+			return
 		}
-		var ticket DeliverTicket
-		json.Unmarshal(data, &ticket)
-		fmt.Println("Ticket: ", ticket)
+		//{"ticket_id":"10022","create_time":"1490879218","money":"5","car_number":"川AD12345","order_id":"9880","remark":"32","park_id":"test001"}
 
+		var ticket JumaDeliverTicket
+		json.Unmarshal(data, &ticket)
+		HandleJuMaTick(ticket)
 		c.JSON(http.StatusOK, gin.H{
 			"status": "ok",
 			"age":    123,
@@ -121,8 +121,6 @@ func main() {
 			"result": "success",
 		})
 	})
-	//":"+strconv.Itoa(Config.ServerConfig.Httpport)
-	//os.Getenv("PORT")
 	router.Run(":" + strconv.Itoa(Config.ServerConfig.Httpport))
 	logger.Info("End main.......")
 }

@@ -84,7 +84,6 @@ func (ps *ParkServer) HandleConn(conn net.Conn) {
 	}
 
 }
-
 func (ps *ParkServer) handleMessage(conn net.Conn, buf []byte, n int) {
 
 	servicename := jsoniter.Get(buf, "service_name").ToString()
@@ -100,11 +99,11 @@ func (ps *ParkServer) handleMessage(conn net.Conn, buf []byte, n int) {
 	var retString string
 	switch servicename {
 	case "login":
-		retString = handleLogin(buf, n)
+		retString = handleLogin(conn, buf[:n], n)
 	case "in_park":
-		retString = handleInPark(buf, n)
+		retString = handleInPark(buf[:n], n)
 	case "out_park":
-		retString = handleOutpark(buf, n)
+		retString = handleOutpark(buf[:n], n)
 
 	}
 	if retString == "" {
