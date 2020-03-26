@@ -6,8 +6,16 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
+func checkSign(jsonData string, sign string) {
+	testKey := "206d98f4de9e4423b3aa42cd0c36fd84"
+	ss := jsonData + testKey
+	md5String := MD5(ss)
+	x := strings.Compare(md5String, sign)
+	fmt.Println("comapre-->", x, md5String, sign)
+}
 func makepostURL(actionName string, sValue string) string {
 	testKey := "206d98f4de9e4423b3aa42cd0c36fd84"
 	ss := sValue[:len(sValue)-1] + testKey
@@ -59,6 +67,6 @@ func JumaMakeParkOut() {
 	parkPost("carEnd", b)
 }
 func JumaTest() {
-	Juma_makeParkIn()
-	Juma_makeParkOut()
+	JumaMakeParkIn()
+	JumaMakeParkOut()
 }

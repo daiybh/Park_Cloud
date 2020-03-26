@@ -125,8 +125,8 @@ func handleInPark(jsonStr []byte, n int) string {
 		return ""
 	}
 
-	if !ClientGroup.CheckToken(inPark.Data.ParkID, inPark.token) {
-		logger.Error("wrong token ", inPark.Data.ParkID, inPark.token)
+	if !ClientGroup.CheckToken(inPark.Data.ParkID, inPark.Token) {
+		logger.Error("wrong token ", inPark.Data.ParkID, inPark.Token)
 		return ""
 	}
 

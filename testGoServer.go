@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/kuxuee/logger"
 )
 
@@ -71,29 +72,57 @@ func main() {
 	})
 	ps.startServer(Config.ServerConfig.Socketport)
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		//var s string
-		//s = "welcome " + time.Now().UTC().String() + "<br>"
+	router := gin.Default()
 
-		fmt.Fprintln(w, "welcome to go website"+time.Now().UTC().String())
+	router.GET("/", func(c *gin.Context) {
+		fmt.Fprintln(c.Writer, "welcome to go website"+time.Now().UTC().String())
 		for k, v := range ps.connMap {
-			fmt.Fprintln(w, k, v, v.RemoteAddr().String())
+			fmt.Fprintln(c.Writer, k, v, v.RemoteAddr().String())
 		}
-
 	})
-	http.Handle("/park/deliverTicket", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != "POST" {
+	router.POST("/park/deliverTicket", func(c *gin.Context) {
+
+		contentType := c.ContentType()
+		if contentType != "application/json" {
+			c.JSON(http.StatusNoContent, gin.H{
+				"state":  204,
+				"result": "don't support " + contentType,
+			})
 			return
 		}
+		fmt.Println("contentType:---->", contentType)
+		sign := c.Query("sign")
 
+		fmt.Println("sign->", sign)
+		data, _ := ioutil.ReadAll(c.Request.Body)
+		fmt.Println("ctx.Request.body:", string(data))
+		logger.Info("deliverTicket", string(data))
+		checkSign(string(data), sign)
+		//{"ticket_id":"10022","create_time":"1490879218","money":"5","car_number":"川AD12345","order_id":"9880","remark":"32","park_id":"test001"}
+		type DeliverTicket struct {
+			TicketID   string `json:"ticket_id"`
+			CreateTime string `json:"create_time"`
+			Money      string `json:"money"`
+			CarNumber  string `json:"car_number"`
+			OrderID    string `json:"order_id"`
+			Remark     string `json:"remark"`
+			ParkID     string `json:"park_id"`
+		}
+		var ticket DeliverTicket
+		json.Unmarshal(data, &ticket)
+		fmt.Println("Ticket: ", ticket)
+
+		c.JSON(http.StatusOK, gin.H{
+			"status": "ok",
+			"age":    123,
+			"sign":   sign,
+			"token":  ticket.TicketID,
+			"state":  200,
+			"result": "success",
+		})
 	})
-
-	fs := http.FileServer(http.Dir("static/"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
-
-	err = http.ListenAndServe(":"+strconv.Itoa(Config.ServerConfig.Httpport), nil)
-	if err != nil {
-		logger.Fatal("http.listern ", Config.ServerConfig.Httpport, " failed.", err)
-	}
+	//":"+strconv.Itoa(Config.ServerConfig.Httpport)
+	//os.Getenv("PORT")
+	router.Run(":" + strconv.Itoa(Config.ServerConfig.Httpport))
 	logger.Info("End main.......")
 }
