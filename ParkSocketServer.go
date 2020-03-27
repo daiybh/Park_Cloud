@@ -9,7 +9,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-type ParkServer struct {
+type ParkSocketServer struct {
 	listener net.Listener
 	connMap  map[string]net.Conn //key:park_id value: Net.conn
 	m        map[string]muxEntry
@@ -25,7 +25,7 @@ type HandlerFunc func([]byte, int, net.Conn)
 func (f HandlerFunc) ServeHTTP(buf []byte, n int, conn net.Conn) {
 	f(buf, n, conn)
 }
-func (ps *ParkServer) HandleFunc(pattern string, handler func(buf []byte, n int, conn net.Conn)) {
+func (ps *ParkSocketServer) HandleFunc(pattern string, handler func(buf []byte, n int, conn net.Conn)) {
 	//	DefaultServeMux.HandleFunc(pattern, handler)
 	if ps.m == nil {
 		ps.m = make(map[string]muxEntry)
@@ -35,7 +35,7 @@ func (ps *ParkServer) HandleFunc(pattern string, handler func(buf []byte, n int,
 	//e := muxEntry{h: hh, pattern: pattern}
 	//ps.m[pattern] = e
 }
-func (ps *ParkServer) acceptThread() {
+func (ps *ParkSocketServer) acceptThread() {
 	defer ps.listener.Close() // 主协程结束时，关闭listener
 	fmt.Println("parkServer   acceptThrad....")
 	ps.connMap = make(map[string]net.Conn)
@@ -53,7 +53,7 @@ func (ps *ParkServer) acceptThread() {
 		go ps.HandleConn(conn)
 	}
 }
-func (ps *ParkServer) startServer(port int) {
+func (ps *ParkSocketServer) startServer(port int) {
 	var err error
 	ps.listener, err = net.Listen("tcp", ":"+strconv.Itoa(port))
 	if err != nil {
@@ -64,7 +64,7 @@ func (ps *ParkServer) startServer(port int) {
 	go ps.acceptThread()
 }
 
-func (ps *ParkServer) HandleConn(conn net.Conn) {
+func (ps *ParkSocketServer) HandleConn(conn net.Conn) {
 	defer conn.Close()
 	//获取客户端的网络地址信息
 	addr := conn.RemoteAddr().String()
@@ -84,7 +84,7 @@ func (ps *ParkServer) HandleConn(conn net.Conn) {
 	}
 
 }
-func (ps *ParkServer) handleMessage(conn net.Conn, buf []byte, n int) {
+func (ps *ParkSocketServer) handleMessage(conn net.Conn, buf []byte, n int) {
 
 	servicename := jsoniter.Get(buf, "service_name").ToString()
 	fmt.Println("servicename ---->", servicename)

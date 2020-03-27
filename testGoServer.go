@@ -67,7 +67,7 @@ func main() {
 	logger.Info("##############startMain###############http:", Config.ServerConfig.Httpport, "  socket:", Config.ServerConfig.Socketport)
 
 	// 创建监听
-	ps := ParkServer{}
+	ps := ParkSocketServer{}
 	ps.HandleFunc("login", func(buf []byte, n int, conn net.Conn) {
 
 	})
