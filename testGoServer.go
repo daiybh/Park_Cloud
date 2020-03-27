@@ -91,7 +91,12 @@ func main() {
 		if name != "" {
 			vjson = strings.Replace(vjson, "苏AQW888", name, 1)
 		}
-		ClientGroup.SendToClient("24155", []byte(vjson))
+		b := ClientGroup.SendToClient("24155", []byte(vjson))
+		c.JSON(http.StatusOK, gin.H{
+			"state":  200,
+			"result": b,
+			"vv":     vjson,
+		})
 	})
 	router.POST("/park/deliverTicket", func(c *gin.Context) {
 		contentType := c.ContentType()
