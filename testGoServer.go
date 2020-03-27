@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/daiybh/logger"
 	"github.com/gin-gonic/gin"
-	"github.com/kuxuee/logger"
 )
 
 func heartPack(conn net.Conn) {
@@ -64,7 +64,7 @@ func main() {
 
 	defer logger.Close()
 
-	logger.Info("start main.......http:", Config.ServerConfig.Httpport, "  socket:", Config.ServerConfig.Socketport)
+	logger.Info("##############startMain###############http:", Config.ServerConfig.Httpport, "  socket:", Config.ServerConfig.Socketport)
 
 	// 创建监听
 	ps := ParkServer{}
@@ -92,6 +92,7 @@ func main() {
 			vjson = strings.Replace(vjson, "苏AQW888", name, 1)
 		}
 		b := ClientGroup.SendToClient("24155", []byte(vjson))
+
 		c.JSON(http.StatusOK, gin.H{
 			"state":  200,
 			"result": b,
