@@ -8,8 +8,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/daiybh/logger"
 	jsoniter "github.com/json-iterator/go"
-	"github.com/kuxuee/logger"
 )
 
 type loginReturn struct {

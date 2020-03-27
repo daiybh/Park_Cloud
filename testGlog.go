@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/kuxuee/logger"
+	"github.com/daiybh/logger"
 )
 
 func mainlog() {
