@@ -68,7 +68,7 @@ func (ps *ParkServer) HandleConn(conn net.Conn) {
 	defer conn.Close()
 	//获取客户端的网络地址信息
 	addr := conn.RemoteAddr().String()
-	fmt.Println(addr, " conncet sucessful")
+	logger.Info(addr, " conncet sucessful")
 
 	buf := make([]byte, 2048)
 
